@@ -51,10 +51,9 @@ public class AudioCapture {
      */
 
     public static void main(String[] args) throws LineUnavailableException, InterruptedException {
-
         Optional<Mixer.Info> stereoMixInfo = Arrays.stream(getMixerInfo()).filter(i -> i.getName().toLowerCase().contains("stereo mix")).findFirst();
         if (!stereoMixInfo.isPresent())
-            throw new IllegalStateException("No Stereo Mix found! Please enable in control panel.");
+            throw new IllegalStateException("No mixer named [Stereo Mix] found! Please enable and/or rename in control panel.");
 
         AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 44100.0F, 8, 2, 2, 44100.0F, false);
         Mixer.Info info = stereoMixInfo.get();// new DataLine.Info(TargetDataLine.class, format);
@@ -65,8 +64,7 @@ public class AudioCapture {
         targetLine.start();
 
         Thread thread = new Thread(() -> {
-            AudioInputStream audioStream = new AudioInputStream(
-                    targetLine);
+            AudioInputStream audioStream = new AudioInputStream(targetLine);
             File audioFile = new File("record.wav");
             try {
                 AudioSystem.write(audioStream,
