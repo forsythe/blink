@@ -1,8 +1,10 @@
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.TargetDataLine;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -41,7 +43,7 @@ public class AudioCapture {
 //    }
 
     /**
-     * Stereo mix supports:
+     * my stereo mix supports:
      * PCM_UNSIGNED unknown sample rate, 8 bit, mono, 1 bytes/frame,
      * PCM_SIGNED unknown sample rate, 8 bit, mono, 1 bytes/frame,
      * PCM_SIGNED unknown sample rate, 16 bit, mono, 2 bytes/frame, little-endian
@@ -54,48 +56,44 @@ public class AudioCapture {
 
     static boolean broadcast = true;
 
-    public static void main(String[] args) throws LineUnavailableException, InterruptedException, IOException {
+    public static void main(String[] args) throws LineUnavailableException, IOException {
+        DatagramSocket listenSocket = new DatagramSocket(Shared.port);
+        byte[] clientReqBuf = new byte[256];
+        DatagramPacket clientReqPacket = new DatagramPacket(clientReqBuf, clientReqBuf.length);
+        listenSocket.receive(clientReqPacket); //blocks until I connect
+
+
         Optional<Mixer.Info> stereoMixInfo = Arrays.stream(getMixerInfo()).filter(i -> i.getName().toLowerCase().contains("stereo mix")).findFirst();
         if (!stereoMixInfo.isPresent())
             throw new IllegalStateException("No mixer named [Stereo Mix] found! Please enable and/or rename in control panel.");
 
-        AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F, 16, 2, 4, 44100.0F, false);
-        Mixer.Info info = stereoMixInfo.get();// new DataLine.Info(TargetDataLine.class, format);
-        TargetDataLine targetLine = AudioSystem.getTargetDataLine(format, info);
+        Mixer.Info info = stereoMixInfo.get();
+        TargetDataLine targetLine = AudioSystem.getTargetDataLine(Shared.format, info);
 
         System.out.println("Recording");
-        targetLine.open(format);
+        targetLine.open(Shared.format);
         targetLine.start();
-
         int numBytesRead;
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[Shared.bufferSize];
         DatagramSocket socket = new DatagramSocket();
-        InetAddress addr = InetAddress.getByName("192.168.128.112");
+
+        boolean aboveNoise;
         while (broadcast) {
-            numBytesRead = targetLine.read(buffer, 0, 1024);
-            DatagramPacket req = new DatagramPacket(buffer, numBytesRead, addr, 444);
+            aboveNoise = false;
+            numBytesRead = targetLine.read(buffer, 0, Shared.bufferSize);
+            for (int i = 0; i < numBytesRead; i++) {
+                if (Math.abs(buffer[i]) > 10) {
+                    aboveNoise = true;
+                    break;
+                }
+            }
+            if (!aboveNoise) {
+                continue;
+            }
+            DatagramPacket req = new DatagramPacket(buffer, numBytesRead, clientReqPacket.getAddress(), clientReqPacket.getPort());
             socket.send(req);
-//            System.out.println("Sending " + Arrays.toString(buffer));
-//            targetLine.flush();
-//            targetLine.drain();
         }
-//
-//        Thread thread = new Thread(() -> {
-//            AudioInputStream audioStream = new AudioInputStream(targetLine);
-//            File audioFile = new File("record.wav");
-//            try {
-//                AudioSystem.write(audioStream,
-//                        AudioFileFormat.Type.WAVE, audioFile);
-//            } catch (IOException ioe) {
-//                ioe.printStackTrace();
-//            }
-//            System.out.println("stopped recording");
-//        });
-//
-//        thread.start();
-//        Thread.sleep(5000);
         targetLine.stop();
         targetLine.close();
-        System.out.println("Done");
     }
 }
