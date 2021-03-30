@@ -59,7 +59,7 @@ public class AudioCapture {
         if (!stereoMixInfo.isPresent())
             throw new IllegalStateException("No mixer named [Stereo Mix] found! Please enable and/or rename in control panel.");
 
-        AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 44100.0F, 8, 2, 2, 44100.0F, false);
+        AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F, 16, 2, 4, 44100.0F, false);
         Mixer.Info info = stereoMixInfo.get();// new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine targetLine = AudioSystem.getTargetDataLine(format, info);
 
@@ -70,11 +70,14 @@ public class AudioCapture {
         int numBytesRead;
         byte[] buffer = new byte[1024];
         DatagramSocket socket = new DatagramSocket();
-        InetAddress addr = InetAddress.getByName("localhost");
+        InetAddress addr = InetAddress.getByName("192.168.128.112");
         while (broadcast) {
             numBytesRead = targetLine.read(buffer, 0, 1024);
             DatagramPacket req = new DatagramPacket(buffer, numBytesRead, addr, 444);
             socket.send(req);
+//            System.out.println("Sending " + Arrays.toString(buffer));
+//            targetLine.flush();
+//            targetLine.drain();
         }
 //
 //        Thread thread = new Thread(() -> {

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a19d1625-9448-4600-9877-0406f1d92eaa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/AudioReceiver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -12,9 +11,7 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/AudioCapture.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/AudioCapture.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/record.wav" beforeDir="false" afterPath="$PROJECT_DIR$/record.wav" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/AudioCapture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/AudioCapture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Client.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,22 +96,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="178" key="#Project_Structure/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617032556158" />
-    <state width="1877" height="376" key="GridCell.Tab.0.bottom" timestamp="1617066469509">
+    <state width="1877" height="376" key="GridCell.Tab.0.bottom" timestamp="1617069133303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="376" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617066469509" />
-    <state width="1877" height="376" key="GridCell.Tab.0.center" timestamp="1617066469508">
+    <state width="1877" height="376" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617069133303" />
+    <state width="1877" height="376" key="GridCell.Tab.0.center" timestamp="1617069133303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="376" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617066469508" />
-    <state width="1877" height="376" key="GridCell.Tab.0.left" timestamp="1617066469508">
+    <state width="1877" height="376" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617069133303" />
+    <state width="1877" height="376" key="GridCell.Tab.0.left" timestamp="1617069133303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="376" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617066469508" />
-    <state width="1877" height="376" key="GridCell.Tab.0.right" timestamp="1617066469508">
+    <state width="1877" height="376" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617069133303" />
+    <state width="1877" height="376" key="GridCell.Tab.0.right" timestamp="1617069133303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="376" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617066469508" />
+    <state width="1877" height="376" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1617069133303" />
     <state x="681" y="261" width="540" height="524" key="StructurePopup" timestamp="1617066529929">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
