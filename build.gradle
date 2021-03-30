@@ -1,16 +1,23 @@
 plugins {
-    id 'java'
+    id 'application'
+}
+apply plugin: "java"
+
+ext {
+    javaMainClass = "Blink"
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
+task runServer(type: JavaExec) {
+    group = "Execution"
+    description = "Start server"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "AudioServer"
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+task runClient(type: JavaExec) {
+    group = "Execution"
+    description = "Start client"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "AudioClient"
 }

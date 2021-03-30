@@ -11,7 +11,7 @@ import java.net.InetAddress;
 public class AudioClient {
     public static void main(String[] args) throws LineUnavailableException, IOException {
         if (args.length != 1) {
-            System.out.println("Usage: java AudioClient <hostname>");
+            System.out.println("Usage: gradlew runClient --args=<hostname>");
             return;
         }
 
