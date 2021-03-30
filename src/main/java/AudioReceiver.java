@@ -21,7 +21,7 @@ public class AudioReceiver {
         InetAddress address = InetAddress.getByName(args[0]);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Shared.port);
         DatagramSocket socket = new DatagramSocket();
-        socket.send(packet);
+        socket.send(packet); //say hi
 
         DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, Shared.format);
         SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
