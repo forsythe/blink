@@ -5,6 +5,7 @@ import javax.sound.sampled.TargetDataLine;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -12,6 +13,9 @@ import static javax.sound.sampled.AudioSystem.getMixerInfo;
 
 public class AudioServer {
     public static void main(String[] args) throws LineUnavailableException, IOException {
+        InetAddress IP = InetAddress.getLocalHost();
+        System.out.println("Server running on " + IP.getHostAddress());
+
         DatagramSocket listenSocket = new DatagramSocket(Shared.port);
         byte[] clientReqBuf = new byte[256];
         DatagramPacket clientReqPacket = new DatagramPacket(clientReqBuf, clientReqBuf.length);
