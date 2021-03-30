@@ -4,27 +4,23 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 
 
 public class AudioReceiver {
     public static void main(String[] args) throws LineUnavailableException, IOException {
-//        if (args.length != 1) {
-//            System.out.println("Usage: java AudioReceiver <hostname>");
-//            return;
-//        }
-//
-//        //Subscribe to server
-//        byte[] buf = new byte[256];
-//        InetAddress address = InetAddress.getByName(args[0]);
-//        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Shared.port);
-//        DatagramSocket socket = new DatagramSocket();
-//        socket.send(packet); //say hi
+        if (args.length != 1) {
+            System.out.println("Usage: java AudioReceiver <hostname>");
+            return;
+        }
 
-        MulticastSocket socket = new MulticastSocket(Shared.port);
-        InetAddress group = InetAddress.getByName(Shared.group);
-        socket.joinGroup(group);
+        //Subscribe to server
+        byte[] buf = new byte[256];
+        InetAddress address = InetAddress.getByName(args[0]);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Shared.port);
+        DatagramSocket socket = new DatagramSocket();
+        socket.send(packet); //say hi
 
         DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, Shared.format);
         SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
