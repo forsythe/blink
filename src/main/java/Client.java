@@ -15,7 +15,7 @@ public class Client {
 
         InputStreamReader ir = new InputStreamReader(socket.getInputStream());
         BufferedReader br = new BufferedReader(ir);
-
+    
         String message;
         while ((message = br.readLine()) != null) {
             System.out.println(message);

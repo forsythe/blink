@@ -1,42 +1,44 @@
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Optional;
 
 import static javax.sound.sampled.AudioSystem.getMixerInfo;
 
 public class AudioCapture {
-    public static void displayMixerInfo() {
-        Mixer.Info[] mixersInfo = getMixerInfo();
-
-        for (Mixer.Info mixerInfo : mixersInfo) {
-            System.out.println("Mixer: " + mixerInfo.getName());
-
-            Mixer mixer = AudioSystem.getMixer(mixerInfo);
-
-            Line.Info[] sourceLineInfo = mixer.getSourceLineInfo();
-            for (Line.Info info : sourceLineInfo)
-                showLineInfo(info);
-
-            Line.Info[] targetLineInfo = mixer.getTargetLineInfo();
-            for (Line.Info info : targetLineInfo)
-                showLineInfo(info);
-        }
-    }
-
-
-    private static void showLineInfo(final Line.Info lineInfo) {
-        System.out.println("  " + lineInfo.toString());
-
-        if (lineInfo instanceof DataLine.Info) {
-            DataLine.Info dataLineInfo = (DataLine.Info) lineInfo;
-
-            AudioFormat[] formats = dataLineInfo.getFormats();
-            for (final AudioFormat format : formats)
-                System.out.println("    " + format.toString());
-        }
-    }
+//    public static void displayMixerInfo() {
+//        Mixer.Info[] mixersInfo = getMixerInfo();
+//
+//        for (Mixer.Info mixerInfo : mixersInfo) {
+//            System.out.println("Mixer: " + mixerInfo.getName());
+//
+//            Mixer mixer = AudioSystem.getMixer(mixerInfo);
+//
+//            Line.Info[] sourceLineInfo = mixer.getSourceLineInfo();
+//            for (Line.Info info : sourceLineInfo)
+//                showLineInfo(info);
+//
+//            Line.Info[] targetLineInfo = mixer.getTargetLineInfo();
+//            for (Line.Info info : targetLineInfo)
+//                showLineInfo(info);
+//        }
+//    }
+//
+//
+//    private static void showLineInfo(final Line.Info lineInfo) {
+//        System.out.println("  " + lineInfo.toString());
+//
+//        if (lineInfo instanceof DataLine.Info) {
+//            DataLine.Info dataLineInfo = (DataLine.Info) lineInfo;
+//
+//            AudioFormat[] formats = dataLineInfo.getFormats();
+//            for (final AudioFormat format : formats)
+//                System.out.println("    " + format.toString());
+//        }
+//    }
 
     /**
      * Stereo mix supports:
@@ -50,7 +52,9 @@ public class AudioCapture {
      * PCM_SIGNED unknown sample rate, 16 bit, stereo, 4 bytes/frame, big-endian
      */
 
-    public static void main(String[] args) throws LineUnavailableException, InterruptedException {
+    static boolean broadcast = true;
+
+    public static void main(String[] args) throws LineUnavailableException, InterruptedException, IOException {
         Optional<Mixer.Info> stereoMixInfo = Arrays.stream(getMixerInfo()).filter(i -> i.getName().toLowerCase().contains("stereo mix")).findFirst();
         if (!stereoMixInfo.isPresent())
             throw new IllegalStateException("No mixer named [Stereo Mix] found! Please enable and/or rename in control panel.");
@@ -63,20 +67,30 @@ public class AudioCapture {
         targetLine.open(format);
         targetLine.start();
 
-        Thread thread = new Thread(() -> {
-            AudioInputStream audioStream = new AudioInputStream(targetLine);
-            File audioFile = new File("record.wav");
-            try {
-                AudioSystem.write(audioStream,
-                        AudioFileFormat.Type.WAVE, audioFile);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-            System.out.println("stopped recording");
-        });
-
-        thread.start();
-        Thread.sleep(5000);
+        int numBytesRead;
+        byte[] buffer = new byte[1024];
+        DatagramSocket socket = new DatagramSocket();
+        InetAddress addr = InetAddress.getByName("localhost");
+        while (broadcast) {
+            numBytesRead = targetLine.read(buffer, 0, 1024);
+            DatagramPacket req = new DatagramPacket(buffer, numBytesRead, addr, 444);
+            socket.send(req);
+        }
+//
+//        Thread thread = new Thread(() -> {
+//            AudioInputStream audioStream = new AudioInputStream(targetLine);
+//            File audioFile = new File("record.wav");
+//            try {
+//                AudioSystem.write(audioStream,
+//                        AudioFileFormat.Type.WAVE, audioFile);
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//            System.out.println("stopped recording");
+//        });
+//
+//        thread.start();
+//        Thread.sleep(5000);
         targetLine.stop();
         targetLine.close();
         System.out.println("Done");
