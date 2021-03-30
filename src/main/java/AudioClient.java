@@ -8,31 +8,33 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
-public class AudioReceiver {
+public class AudioClient {
     public static void main(String[] args) throws LineUnavailableException, IOException {
         if (args.length != 1) {
-            System.out.println("Usage: java AudioReceiver <hostname>");
+            System.out.println("Usage: java AudioClient <hostname>");
             return;
         }
 
         //Subscribe to server
-        byte[] buf = new byte[256];
+        byte[] buf = new byte[Shared.bufferSize];
         InetAddress address = InetAddress.getByName(args[0]);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, Shared.port);
         DatagramSocket socket = new DatagramSocket();
-        socket.send(packet); //say hi
+        socket.send(packet); //say hi for server to register us
 
         DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, Shared.format);
-        SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-        speakers.open(Shared.format);
-        speakers.start();
+        try (SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo)) {
+            speakers.open(Shared.format);
+            speakers.start();
 
-        byte[] receiveData = new byte[Shared.bufferSize];
-
-        while (true) {
-            DatagramPacket response = new DatagramPacket(receiveData, receiveData.length);
-            socket.receive(response);
-            speakers.write(response.getData(), 0, response.getLength());
+            byte[] receiveData = new byte[Shared.bufferSize];
+            boolean listen = true;
+            while (listen) {
+                DatagramPacket response = new DatagramPacket(receiveData, receiveData.length);
+                socket.receive(response);
+                speakers.write(response.getData(), 0, response.getLength());
+            }
+            speakers.stop();
         }
     }
 }
