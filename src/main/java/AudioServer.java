@@ -17,7 +17,12 @@ import static javax.sound.sampled.AudioSystem.getMixerInfo;
 public class AudioServer {
     static List<SocketAddress> clients = new CopyOnWriteArrayList<>();
 
-    static void listenForTcpClients() throws IOException {
+    /**
+     * Track which clients are connected via TCP
+     *
+     * @throws IOException
+     */
+    static void registerClientTcp() throws IOException {
         ServerSocket svSocket = new ServerSocket(Shared.tcpPort);
 
         ExecutorService pool = Executors.newSingleThreadExecutor();
@@ -26,12 +31,18 @@ public class AudioServer {
                 new AudioClientHandler(svSocket.accept(), (tcpAddrStr) -> {
                     String tcpAddrStrIp = tcpAddrStr.toString().substring(0, tcpAddrStr.toString().indexOf(':'));
                     clients = clients.stream().filter(udpAddr -> !udpAddr.toString().contains(tcpAddrStrIp)).collect(Collectors.toList());
+                    printRegisteredClients();
                 }).start();
             }
         });
     }
 
-    static void listenForClients() throws SocketException {
+    /**
+     * Actually send audio to clients via UDP
+     *
+     * @throws SocketException
+     */
+    static void registerClientUdp() throws SocketException {
         DatagramSocket listenSocket = new DatagramSocket(Shared.udpPort);
         ExecutorService pool = Executors.newSingleThreadExecutor();
         pool.submit(() -> {
@@ -44,17 +55,21 @@ public class AudioServer {
                     e.printStackTrace();
                 }
                 clients.add(clientReqPacket.getSocketAddress());
-                System.out.println("Registered clients: " + clients);
+                printRegisteredClients();
             }
         });
+    }
+
+    private static void printRegisteredClients() {
+        System.out.println("Registered clients: " + clients);
     }
 
     public static void main(String[] args) throws LineUnavailableException, IOException {
         InetAddress IP = InetAddress.getLocalHost();
         System.out.println("Server running on " + IP.getHostAddress());
 
-        listenForTcpClients();
-        listenForClients();
+        registerClientTcp();
+        registerClientUdp();
 
         Optional<Mixer.Info> stereoMixInfo = Arrays.stream(getMixerInfo()).filter(i -> i.getName().toLowerCase().contains("stereo mix")).findFirst();
         if (!stereoMixInfo.isPresent())
@@ -69,21 +84,9 @@ public class AudioServer {
             byte[] buffer = new byte[Shared.bufferSize];
             DatagramSocket socket = new DatagramSocket();
 
-//            boolean aboveNoise;
             boolean broadcast = true;
             while (broadcast) {
-//                aboveNoise = false;
                 numBytesRead = targetLine.read(buffer, 0, Shared.bufferSize);
-//                for (int i = 0; i < numBytesRead; i++) {
-//                    if (Math.abs(buffer[i]) > 10) {
-//                        aboveNoise = true;
-//                        break;
-//                    }
-//                }
-//                if (!aboveNoise) {
-//                    socket.send(new DatagramPacket(new byte[Shared.bufferSize],
-//                            numBytesRead, clientReqPacket.getSocketAddress()));
-//                }
                 for (SocketAddress clientAddr : clients) {
                     DatagramPacket req = new DatagramPacket(buffer, numBytesRead, clientAddr);
                     socket.send(req);
