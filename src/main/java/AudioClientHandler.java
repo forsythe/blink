@@ -17,10 +17,7 @@ public class AudioClientHandler extends Thread {
     public void run() {
         System.out.println("Hi " + clientSocket.getRemoteSocketAddress());
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-            String input;
-            while ((input = in.readLine()) != null) {
-                //TODO: it's alive
-            }
+            while (in.readLine() != null) ;
         } catch (IOException ignored) {
 
         } finally {
